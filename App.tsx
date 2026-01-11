@@ -1,11 +1,11 @@
 
 import React, { useState } from 'react';
-import { useTelemetry } from './services/observatoryStore';
-import { TelemetryDashboard } from './components/TelemetryDashboard';
-import { Visualizer } from './components/Visualizer';
-import { SafetyControls } from './components/SafetyControls';
-import { NativeEmulator } from './components/NativeEmulator';
-import { SystemStatus, UserRole } from './types';
+import { useTelemetry } from './services/observatoryStore.ts';
+import { TelemetryDashboard } from './components/TelemetryDashboard.tsx';
+import { Visualizer } from './components/Visualizer.tsx';
+import { SafetyControls } from './components/SafetyControls.tsx';
+import { NativeEmulator } from './components/NativeEmulator.tsx';
+import { SystemStatus, UserRole } from './types.ts';
 
 const App: React.FC = () => {
   const { logs, latest, triggerEStop, triggerReset } = useTelemetry();
@@ -13,11 +13,9 @@ const App: React.FC = () => {
   const [role, setRole] = useState<UserRole>(UserRole.OPERATOR);
 
   const handleNativeEvent = (event: any) => {
-    // Mimic logic: LONG_PRESS on physical button triggers E-STOP
     if (event.type === 'LONG_PRESS') {
       triggerEStop();
     } else if (event.type === 'PRESS') {
-      // PRESS might toggle a detail view or ping the system
       console.log('Bridge: User tapped BLE button');
     }
   };
@@ -29,7 +27,7 @@ const App: React.FC = () => {
         <div className="flex items-center gap-4">
           <div className="flex items-center gap-2">
             <div className="w-8 h-8 bg-white text-black flex items-center justify-center font-black rounded-md">ASO</div>
-            <h1 className="text-sm font-bold tracking-tight">ALIGNMENT OBSERVATORY</h1>
+            <h1 className="text-sm font-bold tracking-tight uppercase">Alignment Observatory</h1>
           </div>
           <div className="h-4 w-[1px] bg-slate-700" />
           <div className="flex items-center gap-2 px-3 py-1 bg-black rounded-full border border-slate-800">
@@ -59,7 +57,6 @@ const App: React.FC = () => {
       <main className="flex-1 p-6 max-w-7xl mx-auto w-full">
         {viewMode === 'MOBILE' ? (
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 h-full">
-            {/* Mobile Sidebar (Controls) */}
             <div className="lg:col-span-4 flex flex-col gap-6">
               <div className="h-[450px]">
                 <SafetyControls 
@@ -78,7 +75,6 @@ const App: React.FC = () => {
               </div>
             </div>
 
-            {/* Mobile Content (Viz & Logs) */}
             <div className="lg:col-span-8 flex flex-col gap-6">
               <div className="h-80 w-full">
                  <Visualizer data={logs} />
@@ -95,7 +91,7 @@ const App: React.FC = () => {
                   <Visualizer data={logs} />
                 </div>
                 <div className="col-span-1 bg-slate-900 border border-slate-800 rounded-lg p-4">
-                  <h2 className="text-sm font-bold text-slate-400 mb-4">OBSERVER ANALYTICS</h2>
+                  <h2 className="text-sm font-bold text-slate-400 mb-4 uppercase">Observer Analytics</h2>
                   <div className="space-y-6">
                     <div>
                       <span className="block text-[10px] text-slate-500 font-bold mb-1">LATENT DRIFT</span>
@@ -111,7 +107,7 @@ const App: React.FC = () => {
                     </div>
                     <div className="p-4 bg-black rounded border border-slate-800">
                       <p className="text-[10px] font-mono text-slate-500 leading-tight">
-                        &gt; OBSERVER NOTE: System displaying normal heuristic patterns. Transitioning from state 0xFF2 to 0xFF4 identified as optimal policy.
+                        &gt; OBSERVER NOTE: System displaying normal heuristic patterns. State 0xFF4 identified as optimal.
                       </p>
                     </div>
                   </div>
@@ -124,12 +120,10 @@ const App: React.FC = () => {
         )}
       </main>
 
-      {/* Simulation Layer */}
       <NativeEmulator onEvent={handleNativeEvent} />
 
-      {/* Footer Info */}
       <footer className="py-4 border-t border-slate-900 flex justify-center text-[10px] text-slate-600 font-mono tracking-widest bg-slate-950">
-        ASO_MVP_V1.0 // DATA_ENCRYPTED // OFFLINE_CAPABLE_CORE
+        ASO_SYSTEM_STABLE // DATA_ENCRYPTED // OFFLINE_CAPABLE
       </footer>
     </div>
   );

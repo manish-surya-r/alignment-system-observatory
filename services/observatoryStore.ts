@@ -1,8 +1,7 @@
 
 import { useState, useEffect, useCallback, useRef } from 'react';
-import { SystemStatus, TelemetryData, UserRole } from '../types';
+import { SystemStatus, TelemetryData, UserRole } from '../types.ts';
 
-// Singleton for Pub/Sub Simulation
 class ObservatoryBackend {
   private listeners: Set<(data: TelemetryData) => void> = new Set();
   private history: TelemetryData[] = [];
@@ -14,9 +13,11 @@ class ObservatoryBackend {
 
   public subscribe(callback: (data: TelemetryData) => void) {
     this.listeners.add(callback);
-    // Replay history on join
     this.history.slice(-20).forEach(callback);
-    return () => this.listeners.delete(callback);
+    // Explicitly returning void in the cleanup function to prevent TypeScript errors in useEffect
+    return () => {
+      this.listeners.delete(callback);
+    };
   }
 
   public publish(data: TelemetryData) {
@@ -42,7 +43,6 @@ class ObservatoryBackend {
     setInterval(() => {
       if (this.currentStatus === SystemStatus.HALTED) return;
 
-      // Random status fluctuations unless locked
       const roll = Math.random();
       let nextStatus = this.currentStatus;
       if (roll > 0.95) nextStatus = SystemStatus.UNCERTAIN;
@@ -56,7 +56,7 @@ class ObservatoryBackend {
         confidence: Math.random() * 0.3 + 0.7,
         entropy: Math.random() * 0.2,
         latentCoordinates: [Math.random() * 100, Math.random() * 100],
-        description: `Routine telemetry sync at ${new Date().toLocaleTimeString()}`
+        description: `Telemetry sync at ${new Date().toLocaleTimeString()}`
       };
       this.publish(data);
     }, 2000);
@@ -70,6 +70,7 @@ export function useTelemetry() {
   const [latest, setLatest] = useState<TelemetryData | null>(null);
 
   useEffect(() => {
+    // Subscribing to telemetry updates from the backend
     const unsubscribe = backend.subscribe((data) => {
       setLogs(prev => [...prev.slice(-49), data]);
       setLatest(data);
