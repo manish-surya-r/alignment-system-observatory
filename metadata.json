@@ -1,0 +1,7 @@
+{
+  "name": "Alignment Systems Observatory (ASO)",
+  "description": "A safety-oriented HMI for supervising complex AI systems, featuring real-time telemetry, state visualization, and emergency overrides.",
+  "requestFramePermissions": [
+    "camera"
+  ]
+}
